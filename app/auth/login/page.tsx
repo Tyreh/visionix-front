@@ -1,31 +1,29 @@
 import { Eye } from "lucide-react"
 
 import { LoginForm } from "@/app/auth/login/login-form"
+import { Card } from "@/components/ui/card"
+import Link from "next/link"
+import React from "react"
 
 export default function LoginPage() {
   return (
-    <div className="grid min-h-svh lg:grid-cols-2">
-      <div className="relative hidden bg-muted lg:block">
-        <img
-          alt=""
-          src="/dalle.webp"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-        />
-      </div>
-      <div className="flex flex-col gap-4 p-6 md:p-10">
-        <div className="flex justify-center gap-2">
-          <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
-            <Eye className="size-4" />
+   
+        <React.Fragment>
+          <div className='flex flex-col space-y-2 text-left pb-4'>
+            <h1 className='text-2xl font-semibold tracking-tight'>Login</h1>
+            <p className='text-sm text-muted-foreground'>
+              Ingresa tus credenciales para acceder a tu cuenta
+            </p>
           </div>
-          Visionix
-        </div>
-        <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
-            <LoginForm />
-          </div>
-        </div>
-      </div>
-
-    </div>
+          <LoginForm />
+          <p className='px-8 text-center text-sm text-muted-foreground pt-4'>
+            <Link
+              href='/auth/forgot-password'
+              className='underline underline-offset-4 hover:text-primary'
+            >
+              ¿Olvidaste tu contraseña?
+            </Link>
+          </p>
+        </React.Fragment>
   )
 }

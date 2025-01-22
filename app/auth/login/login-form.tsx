@@ -1,71 +1,53 @@
 "use client"
-import { useState } from "react";
+import FormPasswordInput from "@/components/ui/form/form-password-input";
+import FormInput from "@/components/ui/form/form-input";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Link from "next/link";
-import { login } from "./action";
+import { Form } from "@/components/ui/form";
 import { redirect } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { login } from "./action";
+import Link from "next/link";
+import { z } from "zod"
 
-export function LoginForm({ className, ...props }) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState({});
+const formSchema = z.object({
+  username: z.string({ required_error: "Este campo es obligatorio" }).min(1, "Este campo es obligatorio").max(25, "El usuario ingresado no es válido"),
+  password: z.string({ required_error: "Este campo es obligatorio" }).min(1, "Este campo es obligatorio").max(30, "La contraseña ingresada no es válida")
+});
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const data = new FormData(event.target);
+export function LoginForm() {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+  })
 
-    setIsLoading(true);
-    const response = await login({
-      username: data.get("username"),
-      password: data.get("password"),
-    });
-
-    if (response?.status === 200) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+    const response = await login(values.username, values.password);
+    if (response.status === 200) {
       redirect("/");
     } else {
-      const fieldErrors = response.errors?.reduce((acc, error) => {
-        acc[error.field] = error.message;
-        return acc;
-      }, {});
-      setErrors(fieldErrors || {});
+      setError(response.message);
     }
-    setIsLoading(false);
-  };
+    setLoading(false);
+  }
 
   return (
-    <form className={`flex flex-col gap-6 ${className}`} onSubmit={handleSubmit}>
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Inicio de Sesión</h1>
-        <p className="text-sm text-muted-foreground">
-          Ingresa tus credenciales para acceder a tu cuenta
-        </p>
-      </div>
-      <div className="grid gap-6">
-        {/* Campo Usuario */}
-        <div className="grid gap-2">
-          <Label htmlFor="username">Usuario</Label>
-          <Input id="username" name="username" placeholder="Usuario" required />
-          {errors.username && <p className="text-sm text-red-500">{errors.username}</p>}
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <div className='grid gap-4'>
+          <FormInput name="username" label="Usuario" control={form.control} props={{ disabled: loading, placeholder: "Nombre de usuario" }} />
+          <FormPasswordInput name="password" label="Contraseña" control={form.control} props={{ disabled: loading, placeholder: "*********" }} />
+          {error && <p className="text-sm mt-2 text-red-500">{error}</p>}
+          <Button type="submit" loading={loading} className="mt-2">Iniciar Sesión</Button>
         </div>
-        
-        {/* Campo Contraseña */}
-        <div className="grid gap-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password">Contraseña</Label>
-            <Link href="/auth/forgot-password" className="text-sm underline">
-              ¿Olvidaste tu contraseña?
-            </Link>
-          </div>
-          <Input id="password" name="password" type="password" placeholder="********" required />
-          {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
-        </div>
-
-        {/* Botón de envío */}
-        <Button type="submit" disabled={isLoading} className="w-full">
-          {isLoading ? "Cargando..." : "Iniciar Sesión"}
-        </Button>
-      </div>
-    </form>
+      </form>
+    </Form>
   );
 }
