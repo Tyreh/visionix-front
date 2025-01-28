@@ -4,11 +4,10 @@ import FormInput from "@/components/ui/form/form-input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { login } from "./action";
-import Link from "next/link";
 import { z } from "zod"
 
 const formSchema = z.object({
@@ -19,6 +18,7 @@ const formSchema = z.object({
 export function LoginForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -27,17 +27,18 @@ export function LoginForm() {
     },
   })
 
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     const response = await login(values.username, values.password);
     if (response.status === 200) {
-      redirect("/");
+      router.push("/");
     } else {
       setError(response.message);
     }
     setLoading(false);
   }
-
+  
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
