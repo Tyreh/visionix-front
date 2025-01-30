@@ -2,13 +2,13 @@ import { LoginForm } from "@/app/auth/login/login-form"
 import Link from "next/link"
 import React from "react"
 
-export default function LoginPage() {
+export default function ResetPasswordPage() {
   return (
     <React.Fragment>
       <div className='flex flex-col space-y-2 text-left pb-4'>
-        <h1 className='text-2xl font-semibold tracking-tight'>Login</h1>
+        <h1 className='text-2xl font-semibold tracking-tight'>Restablece tu contraseña</h1>
         <p className='text-sm text-muted-foreground'>
-          Ingresa tus credenciales para acceder a tu cuenta
+          Ingresa una nueva contraseña para restablecer el acceso a tu cuenta
         </p>
       </div>
       <LoginForm />

@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 
 export async function login(username: string, password: string) {
     try {
-        const response = await fetch(`http://localhost:8080/api/v1/auth/login`, {
+        const response = await fetch(`${process.env.API_URL}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password }),

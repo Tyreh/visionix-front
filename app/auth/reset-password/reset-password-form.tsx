@@ -11,19 +11,19 @@ import { login } from "./action";
 import { z } from "zod"
 
 const formSchema = z.object({
-  username: z.string({ required_error: "Este campo es obligatorio" }).min(1, "Este campo es obligatorio").max(25, "El usuario ingresado no es válido"),
-  password: z.string({ required_error: "Este campo es obligatorio" }).min(1, "Este campo es obligatorio").max(30, "La contraseña ingresada no es válida")
+  password: z.string({ required_error: "Este campo es obligatorio" }).min(1, "Este campo es obligatorio").max(30, "La contraseña ingresada no es válida"),
+  passwordConfirm: z.string({ required_error: "Este campo es obligatorio" }).min(1, "Este campo es obligatorio").max(30, "La contraseña ingresada no es válida")
 });
 
-export function LoginForm() {
+export function ResetPasswordForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
       password: "",
+      passwordConfirm: "",
     },
   })
 
@@ -43,8 +43,8 @@ export function LoginForm() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className='grid gap-4'>
-          <FormInput name="username" label="Usuario" control={form.control} props={{ disabled: loading, placeholder: "Nombre de usuario" }} />
           <FormPasswordInput name="password" label="Contraseña" control={form.control} props={{ disabled: loading, placeholder: "*********" }} />
+          <FormPasswordInput name="passwordConfirm" label="Confirmar contraseña" control={form.control} props={{ disabled: loading, placeholder: "*********" }} />
           {error && <p className="text-sm mt-2 text-red-500">{error}</p>}
           <Button type="submit" loading={loading} className="mt-2">Iniciar Sesión</Button>
         </div>
