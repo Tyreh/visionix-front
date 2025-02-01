@@ -1,17 +1,27 @@
 'use server'
-import { cookies } from "next/headers";
 
 export async function validateToken(recoveryToken: string) {
-    const response = await fetch(`${process.env.API_URL}/auth/validate-recovery-token/`, {
+    const response = await fetch(`${process.env.API_URL}/auth/validate-recovery-token`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: recoveryToken }),
+        cache: "no-store"
     });
 
-    return response.ok;
+    if (response.ok) {
+        return {
+            status: response.status
+        }
+    }
+
+    const data = await response.json();
+    return {
+        status: response.status,
+        message: data.message
+    }
 }
 
-export async function login(rawPassword: string, recoveryToken: string) {
+export async function resetPassword(rawPassword: string, recoveryToken: string) {
     try {
         const response = await fetch(`${process.env.API_URL}/auth/reset-password`, {
             method: 'POST',
@@ -19,11 +29,14 @@ export async function login(rawPassword: string, recoveryToken: string) {
             body: JSON.stringify({ rawPassword, recoveryToken }),
         });
 
-        const data = await response.json();
         if (response.ok) {
-            const { access_token, refresh_token } = data;
+            return {
+                status: 200,
+                message: response.text()
+            }
         }
 
+        const data = await response.json();
         return {
             status: response.status,
             message: data.message

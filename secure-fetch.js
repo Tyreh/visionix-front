@@ -22,6 +22,5 @@ export async function secureFetch(url, options = {}) {
     throw new Error(`Error ${error.status}: ${error.message}`);
   }
 
-  console.log(response);
   return response.json();
 }

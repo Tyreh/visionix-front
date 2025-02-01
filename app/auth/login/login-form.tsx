@@ -32,7 +32,7 @@ export function LoginForm() {
     setLoading(true);
     const response = await login(values.username, values.password);
     if (response.status === 200) {
-      router.push("/");
+      router.push("/dashboard");
     } else {
       setError(response.message);
     }

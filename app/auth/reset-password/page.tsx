@@ -1,22 +1,31 @@
-import { LoginForm } from "@/app/auth/login/login-form"
-import Link from "next/link"
+import { buttonVariants } from "@/components/ui/button";
+import { Frown } from "lucide-react";
 import React from "react"
+import { validateToken } from "./action";
+import { redirect } from "next/navigation";
+import Link from "next/link";
+import ResetPasswordForm from "./reset-password-form";
 
-export default function ResetPasswordPage() {
-  return (
-    <React.Fragment>
-      <div className='flex flex-col space-y-2 text-left pb-4'>
-        <h1 className='text-2xl font-semibold tracking-tight'>Restablece tu contraseña</h1>
-        <p className='text-sm text-muted-foreground'>
-          Ingresa una nueva contraseña para restablecer el acceso a tu cuenta
+export default async function ResetPasswordPage({ searchParams }: { searchParams: { token: string } }) {
+  const token = searchParams?.token;
+  const response = await validateToken(token);
+
+  if (!token) {
+    redirect("/auth/login");
+  }
+
+  if (response.status !== 200) {
+    return (
+      <div className="flex flex-col items-center justify-center p-4">
+        <Frown className
+          ="h-24 w-24 text-red-500 mb-4" />
+        <p className="text-sm mb-4 text-center">
+          {response.message}
         </p>
+        <Link href="/auth/login" className={`${buttonVariants({ variant: 'default' })} mt-2 w-full`}>Volver al inicio de sesión</Link>
       </div>
-      <LoginForm />
-      <p className='px-8 text-center text-sm text-muted-foreground pt-4'>
-        <Link href='/auth/forgot-password' className='underline underline-offset-4 hover:text-primary'>
-          ¿Olvidaste tu contraseña?
-        </Link>
-      </p>
-    </React.Fragment>
-  )
+    );
+  }
+
+  return <ResetPasswordForm token={token}/>;
 }
