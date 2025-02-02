@@ -79,7 +79,7 @@ export default async function Page() {
               </div>
             </CardContent>
           </Card>
-          <Kanban/>
+          <Kanban apiUserId={userData.data.id} />
         </div>
       </div>
     </PageContainer>
