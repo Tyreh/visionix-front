@@ -26,22 +26,27 @@ import FormInput from "@/components/ui/form/form-input";
 
 const formSchema = z.object({
     id: z.string(),
+    kanbanBoardId: z.string(),
     indexOrder: z.number(),
-    title: z.string({ required_error: "Este campo es obligatorio" }).min(1, "Este campo es obligatorio").max(40, "Este campo no puede tener más de 40 caracteres")
+    title: z.string({ required_error: "Este campo es obligatorio" }).min(1, "Este campo es obligatorio").max(200, "Este campo no puede tener más de 40 caracteres"),
+    description: z.string({ required_error: "Este campo es obligatorio" }).min(1, "Este campo es obligatorio")
 });
 
 interface Props {
     apiUrl: string;
     id?: string;
+    kanbanBoardId?: string;
 }
 
-export default function KanbanForm({ apiUrl, id }: Props) {
+export default function KanbanCardForm({ apiUrl, id, kanbanBoardId }: Props) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             id: "",
+            kanbanBoardId: "",
             indexOrder: 0,
-            title: ""
+            title: "",
+            description: "",
         },
         reValidateMode: "onBlur",
         mode: "onBlur"
@@ -55,20 +60,22 @@ export default function KanbanForm({ apiUrl, id }: Props) {
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setLoading(true);
-        const response = await secureFetch(`${apiUrl}/kanban-board${id ? `/${id}` : ''}`, {
+        const response = await secureFetch(`${apiUrl}/kanban-card${id ? `/${id}` : ''}`, {
             method: id ? 'PATCH' : 'POST',
             body: JSON.stringify({
                 ...(id ? { id: id } : {}),
                 indexOrder: values.indexOrder,
-                title: values.title
+                ...(kanbanBoardId ? { kanbanBoard: {id: kanbanBoardId} } : {}),
+                title: values.title,
+                description: values.description
             })
         });
 
         if (response.status === 200) {
             router.refresh();
             toast({
-                title: '🎉 ¡Todo listo!',
-                description: 'Tu nuevo tablero está listo para usarse. Agrega tareas y empieza a moverlas entre columnas.'
+                title: '✍️ ¡Hecho, anotado y listo!',
+                description: 'Organízala en tu tablero y mantén el progreso en marcha.'
             })
             form.reset();
             setOpen(false);
@@ -92,17 +99,17 @@ export default function KanbanForm({ apiUrl, id }: Props) {
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger className={`${buttonVariants({ 'variant': 'secondary' })}`}>
-                <Plus className="h-4 w-4" />
+            <DialogTrigger className={`${buttonVariants({ 'variant': 'secondary' })} w-full`}>
+                <Plus className="h-4 w-4" />Crear tarea
             </DialogTrigger>
             <DialogContent>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
 
                         <DialogHeader>
-                            <DialogTitle>Crear Tablero</DialogTitle>
+                            <DialogTitle>Crear Tarea</DialogTitle>
                             <DialogDescription>
-                                Define un nombre y personaliza tu tablero
+                                ¿Qué hay pa&apos; hacer?
                             </DialogDescription>
                         </DialogHeader>
 
@@ -110,7 +117,12 @@ export default function KanbanForm({ apiUrl, id }: Props) {
                             {loadingData ?
                                 <Skeleton className="h-8 w-full" />
                                 :
-                                <FormInput name="title" label="Título del Tablero" control={form.control} props={{ disabled: loading }} />
+                                <FormInput name="title" label="Título o resumen de la tarea" control={form.control} props={{ disabled: loading }} />
+                            }
+                            {loadingData ?
+                                <Skeleton className="h-24 w-full" />
+                                :
+                                <FormTextArea name="description" label="Descripción" control={form.control} props={{ disabled: loading }} />
                             }
                         </div>
                         <DialogFooter>

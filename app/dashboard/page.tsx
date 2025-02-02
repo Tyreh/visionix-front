@@ -3,8 +3,9 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardTitle, CardHeader, CardContent, CardDescription } from "@/components/ui/card";
 import { secureFetch } from "@/secure-fetch";
 import { IconCircleFilled } from "@tabler/icons-react";
-import Reminder from "./reminder";
-import Kanban from "./kanban";
+import Reminder from "./reminder/reminder";
+import Kanban from "./kanban/kanban";
+import KanbanMain from "./kanban/kanban-main";
 
 export default async function Page() {
   const userData = await secureFetch(`${process.env.API_URL}/user/logged-user`);
@@ -79,7 +80,7 @@ export default async function Page() {
               </div>
             </CardContent>
           </Card>
-          <Kanban apiUserId={userData.data.id} />
+          <KanbanMain apiUserId={userData.data.id} />
         </div>
       </div>
     </PageContainer>
