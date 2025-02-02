@@ -35,8 +35,8 @@ export function LoginForm() {
       router.push("/dashboard");
     } else {
       setError(response.message);
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   return (

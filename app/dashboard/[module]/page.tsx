@@ -13,7 +13,7 @@ export default async function Page({ params }: { params: { module: string } }) {
     const { module } = await params;
     console.log(`${process.env.API_URL}/module-definition`)
     const configDefinitions = await secureFetch(`${process.env.API_URL}/module-definition`);
-    const config = configDefinitions.find((def: { moduleName: string; }) => def.moduleName === module);
+    const config = configDefinitions.data.find((def: { moduleName: string; }) => def.moduleName === module);
     if (!config) return redirect("/");
     return (
         <PageContainer scrollable={false}>

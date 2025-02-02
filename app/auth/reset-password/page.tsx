@@ -17,8 +17,7 @@ export default async function ResetPasswordPage({ searchParams }: { searchParams
   if (response.status !== 200) {
     return (
       <div className="flex flex-col items-center justify-center p-4">
-        <Frown className
-          ="h-24 w-24 text-red-500 mb-4" />
+        <Frown className="h-24 w-24 text-red-500 mb-4" />
         <p className="text-sm mb-4 text-center">
           {response.message}
         </p>
@@ -27,5 +26,5 @@ export default async function ResetPasswordPage({ searchParams }: { searchParams
     );
   }
 
-  return <ResetPasswordForm token={token}/>;
+  return <ResetPasswordForm token={token} />;
 }

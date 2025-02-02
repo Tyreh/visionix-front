@@ -7,18 +7,8 @@ export async function forgotPassword(username: string) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username }),
         });
-
-        if (response.status === 429) {
-            const data = await response.json();
-            return {
-                status: response.status,
-                message: data.message
-            }
-        } else {
-            return {
-                status: response.status
-            };
-        }
+        const data = await response.json();
+        return data;
     } catch (error: any) {
         return {
             status: 500,

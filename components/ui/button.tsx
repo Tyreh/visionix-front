@@ -56,8 +56,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         <>
           {loading ?
             <React.Fragment>
-              <Loader2 className={cn('h-4 w-4 animate-spin', children && 'mr-2')} />
-              Cargando...
+              <Loader2 className={cn('h-4 w-4 animate-spin')} />
+              {/* <Loader2 className={cn('h-4 w-4 animate-spin', children && 'mr-2')} /> */}
+              
             </React.Fragment>
             : children}
         </>

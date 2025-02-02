@@ -57,6 +57,9 @@ export default function AppSidebar({
     firstName: string
     lastName: string
     username: string
+    company: {
+      name: string;
+    }
   }
 }) {
   const pathname = usePathname();
@@ -69,8 +72,8 @@ export default function AppSidebar({
             <company.logo className='size-4' />
           </div>
           <div className='grid flex-1 text-left text-sm leading-tight'>
-            <span className='truncate font-semibold'>{company.name}</span>
-            <span className='truncate text-xs'>{company.plan}</span>
+            <span className='truncate font-semibold'>Visionix</span>
+            <span className='truncate text-xs'>{company ? company.name : ''}</span>
           </div>
         </div>
       </SidebarHeader>

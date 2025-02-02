@@ -7,18 +7,8 @@ export async function validateToken(recoveryToken: string) {
         body: JSON.stringify({ token: recoveryToken }),
         cache: "no-store"
     });
-
-    if (response.ok) {
-        return {
-            status: response.status
-        }
-    }
-
     const data = await response.json();
-    return {
-        status: response.status,
-        message: data.message
-    }
+    return data;
 }
 
 export async function resetPassword(rawPassword: string, recoveryToken: string) {
@@ -29,19 +19,8 @@ export async function resetPassword(rawPassword: string, recoveryToken: string) 
             body: JSON.stringify({ rawPassword, recoveryToken }),
         });
 
-        if (response.ok) {
-            return {
-                status: 200,
-                message: response.text()
-            }
-        }
-
         const data = await response.json();
-        return {
-            status: response.status,
-            message: data.message
-        };
-
+        return data;
     } catch (error: any) {
         return {
             status: 500,

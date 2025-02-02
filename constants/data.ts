@@ -115,30 +115,30 @@ export const navItems: NavItem[] = [
   //   isActive: false,
   //   items: [] // No child items
   // },
-  {
-    title: 'Almacén',
-    url: '#', // Placeholder as there is no direct link for the parent
-    icon: Warehouse,
-    isActive: true,
-    items: [
-      {
-        title: 'Producto',
-        url: '/dashboard/product',
-        shortcut: ['m', 'm']
-      },
-      {
-        title: 'Categoría de Producto',
-        url: '/dashboard/product-category',
-        shortcut: ['m', 'm']
-      },
+  // {
+  //   title: 'Almacén',
+  //   url: '#', // Placeholder as there is no direct link for the parent
+  //   icon: Warehouse,
+  //   isActive: true,
+  //   items: [
+  //     {
+  //       title: 'Producto',
+  //       url: '/dashboard/product',
+  //       shortcut: ['m', 'm']
+  //     },
+  //     {
+  //       title: 'Categoría de Producto',
+  //       url: '/dashboard/product-category',
+  //       shortcut: ['m', 'm']
+  //     },
  
-      {
-        title: 'Login',
-        shortcut: ['l', 'l'],
-        url: '/',
-      }
-    ]
-  },
+  //     {
+  //       title: 'Login',
+  //       shortcut: ['l', 'l'],
+  //       url: '/',
+  //     }
+  //   ]
+  // },
   // {
   //   title: 'Kanban',
   //   url: '/dashboard/kanban',
