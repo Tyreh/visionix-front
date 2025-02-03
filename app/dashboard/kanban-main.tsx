@@ -1,7 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { secureFetch } from "@/secure-fetch";
-import KanbanBoardForm from "./kanban-board-form";
-import Kanban from "./kanban";
+import KanbanBoardForm from "./kanban2/kanban-board-form";
+import { KanbanBoard } from "@/components/kanban/kanban-board";
+import { WalletCards } from "lucide-react";
 
 interface Props {
     apiUserId: string;
@@ -9,10 +10,13 @@ interface Props {
 
 export default async function KanbanMain({ apiUserId }: Props) {
     const boards = await secureFetch(`${process.env.API_URL}/kanban-board/search?apiUserId=${apiUserId}`);
-    const boardsWithCards = await Promise.all(boards.data.map(async (board) => {
-        const cards = await secureFetch(`${process.env.API_URL}/kanban-card/search?kanbanBoardId=${board.id}&apiUserId=${apiUserId}`);
-        return { ...board, cards: cards.data };
-    }));
+    const cards = await secureFetch(`${process.env.API_URL}/kanban-card/search?apiUserId=${apiUserId}`);
+    // const cardsOfBoards = await Promise.all(boards.data.map(async (board) => {
+    //     const cards = await secureFetch(`${process.env.API_URL}/kanban-card/search?kanbanBoardId=${board.id}&apiUserId=${apiUserId}`);
+    //     return { cards: cards.data };
+    // }));
+
+    console.log(cards);
 
     return (
         <Card className="col-span-full">
@@ -24,7 +28,8 @@ export default async function KanbanMain({ apiUserId }: Props) {
                 <KanbanBoardForm apiUrl={process.env.API_URL || ""} />
             </CardHeader>
             <CardContent>
-                <Kanban boards={boardsWithCards} apiUrl={process.env.API_URL || ""} />
+                <KanbanBoard boards={boards.data} cards={cards.data} apiUrl={process.env.API_URL || ""}/>
+                {/* <Kanban boards={boardsWithCards} apiUrl={process.env.API_URL || ""} /> */}
             </CardContent>
         </Card>
     );

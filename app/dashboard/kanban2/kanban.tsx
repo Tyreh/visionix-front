@@ -1,23 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { DndContext, closestCorners, useSensor, useSensors, PointerSensor, KeyboardSensor } from "@dnd-kit/core";
+import { useState } from "react";
+import { DndContext, rectIntersection, useSensor, useSensors, PointerSensor, KeyboardSensor } from "@dnd-kit/core";
 import { SortableContext, horizontalListSortingStrategy, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
-import { Card, CardTitle, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardTitle, CardHeader, CardContent } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Ellipsis, Pencil, Plus } from "lucide-react";
+import { Ellipsis, Pencil } from "lucide-react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import SortableItem from "@/components/sortable-item";
 import SortableBoard from "@/components/sortable-board";
 import KanbanCardForm from "./kanban-card-form";
+import { Separator } from "@/components/ui/separator";
 
 interface CardData {
     id: string;
     title: string;
     description: string;
     indexOrder: number;
+    createdAt: string;
 }
 
 interface Board {
@@ -41,81 +42,94 @@ export default function Kanban({ apiUrl, boards }: Props) {
         useSensor(KeyboardSensor)
     );
 
-    // Función para manejar el movimiento de tableros y tarjetas
     function handleDragEnd(event: any) {
         const { active, over } = event;
         if (!over) return;
 
+        const activeId = active.id;
+        const overId = over.id;
+
+        let newBoards = [...boardsWithCards];
+
         // Mover tableros
-        const boardIndex = boardsWithCards.findIndex(board => board.id === active.id);
-        const overBoardIndex = boardsWithCards.findIndex(board => board.id === over.id);
+        const boardIndex = newBoards.findIndex(board => board.id === activeId);
+        const overBoardIndex = newBoards.findIndex(board => board.id === overId);
 
         if (boardIndex !== -1 && overBoardIndex !== -1) {
-            setBoardsWithCards(arrayMove(boardsWithCards, boardIndex, overBoardIndex));
+            setBoardsWithCards(arrayMove(newBoards, boardIndex, overBoardIndex));
             return;
         }
 
-        // Mover tarjetas dentro del mismo tablero
-        const boardWithCard = boardsWithCards.find(board =>
-            board.cards.some(card => card.id === active.id)
+        // Mover tarjetas
+        const sourceBoardIndex = newBoards.findIndex(board =>
+            board.cards.some(card => card.id === activeId)
         );
 
-        if (!boardWithCard) return;
+        const destinationBoardIndex = newBoards.findIndex(board =>
+            board.id === overId || board.cards.some(card => card.id === overId)
+        );
 
-        const oldIndex = boardWithCard.cards.findIndex(card => card.id === active.id);
-        const newIndex = boardWithCard.cards.findIndex(card => card.id === over.id);
+        if (sourceBoardIndex === -1 || destinationBoardIndex === -1) return;
 
-        if (oldIndex !== newIndex) {
-            boardWithCard.cards = arrayMove(boardWithCard.cards, oldIndex, newIndex);
-            setBoardsWithCards([...boardsWithCards]);
+        const sourceBoard = newBoards[sourceBoardIndex];
+        const destinationBoard = newBoards[destinationBoardIndex];
+
+        // Remover la tarjeta del tablero original
+        const cardIndex = sourceBoard.cards.findIndex(card => card.id === activeId);
+        if (cardIndex === -1) return;
+
+        const [movedCard] = sourceBoard.cards.splice(cardIndex, 1);
+
+        // Si la tarjeta se suelta sobre otra, insertar en esa posición
+        const overCardIndex = destinationBoard.cards.findIndex(card => card.id === overId);
+
+        if (overCardIndex !== -1) {
+            destinationBoard.cards.splice(overCardIndex + 1, 0, movedCard);
+        } else {
+            // Si se suelta en un espacio vacío dentro del tablero, agregarla al final
+            destinationBoard.cards.push(movedCard);
         }
+
+        // Actualizar el estado con los nuevos datos
+        setBoardsWithCards([...newBoards]);
     }
 
-    // Evitar renderizar si los datos no están listos
-    if (!boardsWithCards || boardsWithCards.length === 0) {
-        return <p className="text-center text-muted-foreground">Cargando tableros...</p>;
-    }
 
     return (
-        <DndContext sensors={sensors} collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
+        <DndContext sensors={sensors} collisionDetection={rectIntersection} onDragEnd={handleDragEnd}>
             <SortableContext items={boardsWithCards} strategy={horizontalListSortingStrategy}>
                 <ScrollArea className="w-full max-w-full overflow-x-auto relative">
                     <div className="flex gap-4 p-2 pb-10">
                         {boardsWithCards.map((board) => (
                             <SortableBoard key={board.id} id={board.id}>
                                 <Card className="w-80 flex-shrink-0 min-h-[400px]">
-                                    <CardHeader className="flex flex-row justify-between items-center">
+                                    <CardHeader className="flex flex-row justify-between items-center py-2">
                                         <div className="flex items-center gap-2">
-                                            
                                             <CardTitle className="text-muted-foreground uppercase text-sm font-normal">
                                                 {board.title}
                                             </CardTitle>
                                         </div>
                                         <Button variant="ghost" size="icon"><Pencil className="w-4 h-4" /></Button>
                                     </CardHeader>
-
+                                    <Separator className="mb-2" />
                                     <CardContent className='flex flex-col gap-4 p-2'>
                                         <SortableContext items={board.cards} strategy={verticalListSortingStrategy}>
                                             {board.cards.map((card) => (
                                                 <SortableItem key={card.id} id={card.id}>
                                                     <Dialog>
-                                                        <DialogTrigger className="p-2 rounded-md border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground text-left">
-                                                            
-                                                                {card.title}
+                                                        <DialogTrigger className="p-2 w-full rounded-md border bg-background shadow-sm hover:bg-accent">
+                                                            {card.title}
                                                         </DialogTrigger>
                                                     </Dialog>
                                                 </SortableItem>
                                             ))}
                                         </SortableContext>
-                                    </CardContent>
-                                    <CardFooter>
                                         <KanbanCardForm apiUrl={apiUrl} kanbanBoardId={board.id} />
-                                    </CardFooter>
+                                    </CardContent>
                                 </Card>
                             </SortableBoard>
                         ))}
                     </div>
-                    <ScrollBar orientation="horizontal" className="absolute bottom-0 w-full visible" />
                 </ScrollArea>
             </SortableContext>
         </DndContext>

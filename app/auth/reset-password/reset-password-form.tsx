@@ -58,7 +58,7 @@ export default function ResetPasswordPage({ token }: { token: string }) {
   if (success) {
     return (
       <div className="flex flex-col items-center justify-center p-4">
-        <ShieldCheck className="h-24 w-24 text-green-500 mb-4" />
+        <ShieldCheck className="h-24 w-24 text-primary mb-4" />
         <p className="text-sm mb-4 text-center">
           Tu contraseña ha sido actualizada con éxito. Para mantener la seguridad de tu cuenta, te recomendamos cambiarla periódicamente.
         </p>
