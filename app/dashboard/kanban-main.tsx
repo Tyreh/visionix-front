@@ -16,7 +16,6 @@ export default async function KanbanMain({ apiUserId }: Props) {
     //     return { cards: cards.data };
     // }));
 
-    console.log(cards);
 
     return (
         <Card className="col-span-full">

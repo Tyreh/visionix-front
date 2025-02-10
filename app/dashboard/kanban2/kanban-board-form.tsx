@@ -15,7 +15,7 @@ import { Form } from "@/components/ui/form";
 import FormTextArea from "@/components/ui/form/form-text-area";
 import { secureFetch } from "@/secure-fetch";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Pen, Plus } from "lucide-react";
+import { Pencil, Plus } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast"
 import { Skeleton } from "@/components/ui/skeleton";
 import FormInput from "@/components/ui/form/form-input";
+import { UniqueIdentifier } from "@dnd-kit/core";
 
 const formSchema = z.object({
     id: z.string(),
@@ -32,7 +33,7 @@ const formSchema = z.object({
 
 interface Props {
     apiUrl: string;
-    id?: string;
+    id?: UniqueIdentifier;
 }
 
 export default function KanbanBoardForm({ apiUrl, id }: Props) {
@@ -84,7 +85,7 @@ export default function KanbanBoardForm({ apiUrl, id }: Props) {
 
     async function fetchData() {
         setLoadingData(true);
-        const response = await secureFetch(`${apiUrl}/note/${id}`);
+        const response = await secureFetch(`${apiUrl}/kanban-board/${id}`);
         form.setValue("id", response.data.id);
         form.setValue("title", response.data.title);
         setLoadingData(false);
@@ -92,13 +93,19 @@ export default function KanbanBoardForm({ apiUrl, id }: Props) {
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger className={`${buttonVariants({ 'variant': 'default', 'size': 'icon' })}`}>
-                <Plus className="h-4 w-4" />
-            </DialogTrigger>
+            {id ?
+                <DialogTrigger onClick={() => fetchData()} className={`${buttonVariants({ 'variant': 'ghost', 'size': 'icon' })} p-1 ms-2 text-primary/50 h-auto`}>
+                    <Pencil />
+                </DialogTrigger>
+                :
+                <DialogTrigger className={buttonVariants({'variant': 'default', 'size': 'icon'})}>
+                    <Plus />
+                </DialogTrigger>
+            }
+   
             <DialogContent>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
-
                         <DialogHeader>
                             <DialogTitle>Crear Tablero</DialogTitle>
                             <DialogDescription>

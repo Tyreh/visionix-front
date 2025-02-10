@@ -257,7 +257,7 @@ export function KanbanBoard({ boards, cards, apiUrl }: Props) {
                                 )}
                             />
                         )}
-                        {activeTask && <TaskCard task={activeTask} isOverlay />}
+                        {activeTask && <TaskCard task={activeTask} apiUrl={apiUrl} isOverlay />}
                     </DragOverlay>,
                     document.body
                 )}

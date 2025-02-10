@@ -18,61 +18,38 @@ function decodeJWT(token) {
 }
 
 export async function secureFetch(url, options = {}) {
-  const cookieStore = cookies();
-  let currentAccessToken = cookieStore.get('accessToken')?.value;
-  let currentRefreshToken = cookieStore.get('refreshToken')?.value;
+  const cookieStore = await cookies();
+  let accessToken = cookieStore.get('accessToken');
+  let refreshToken = cookieStore.get('refreshToken');
 
-  if (!currentAccessToken) {
-    const refreshTokensResponse = await fetch(`${process.env.API_URL}/auth/refresh-token`, {
+
+  let headers = {};
+  if (refreshToken?.value && !accessToken) {
+    console.log("RENOVANDO TOKEN....")
+    const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/auth/`, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${currentRefreshToken}`,
         "Content-Type": "application/json"
-      }
+      },
+      body: JSON.stringify({
+        refreshToken: refreshToken.value
+      })
     });
-
-    if (!refreshTokensResponse.ok) {
-      throw new Error("Error refreshing tokens");
-    }
-
-    const data = await refreshTokensResponse.json();
-    const { accessToken, refreshToken } = data;
-
-    const accessPayload = decodeJWT(accessToken);
-    const refreshPayload = decodeJWT(refreshToken);
-
-    const accessExpires = accessPayload?.exp
-      ? new Date(accessPayload.exp * 1000)
-      : new Date(Date.now() + 15 * 60 * 1000);
-
-    const refreshExpires = refreshPayload?.exp
-      ? new Date(refreshPayload.exp * 1000)
-      : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-
-    cookieStore.set({
-      name: 'accessToken',
-      value: accessToken,
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      expires: accessExpires
-    });
-
-    cookieStore.set({
-      name: 'refreshToken',
-      value: refreshToken,
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      expires: refreshExpires
-    });
-
-    currentAccessToken = accessToken;
+    const data = await response.json();
+  
+    headers = {
+      ...options.headers,
+      "Authorization": `Bearer ${data.accessToken}`,
+      "Content-Type": "application/json",
+    };
+  } else {
+    headers = {
+      ...options.headers,
+      "Authorization": `Bearer ${accessToken.value}`,
+      "Content-Type": "application/json",
+    };
   }
 
-  const headers = {
-    ...options.headers,
-    "Authorization": `Bearer ${currentAccessToken}`,
-    "Content-Type": "application/json",
-  };
 
   const response = await fetch(url, {
     ...options,

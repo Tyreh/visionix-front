@@ -6,7 +6,8 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import ResetPasswordForm from "./reset-password-form";
 
-export default async function ResetPasswordPage({ searchParams }: { searchParams: { token: string } }) {
+export default async function ResetPasswordPage(props: { searchParams: Promise<{ token: string }> }) {
+  const searchParams = await props.searchParams;
   const token = searchParams?.token;
   const response = await validateToken(token);
 

@@ -7,9 +7,10 @@ import { Task, TaskCard } from "./task-card";
 import { cva } from "class-variance-authority";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { GripVertical, Plus } from "lucide-react";
+import { GripVertical, Pencil, Plus } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import KanbanCardForm from "@/app/dashboard/kanban2/kanban-card-form";
+import KanbanBoardForm from "@/app/dashboard/kanban2/kanban-board-form";
 
 export interface Column {
   id: UniqueIdentifier;
@@ -72,37 +73,31 @@ export function BoardColumn({ column, tasks, isOverlay, apiUrl }: BoardColumnPro
   );
 
   return (
-    <Card className="flex flex-col justify-between bg-primary-foreground">
-      <div ref={setNodeRef}
-        style={style}
-        className={`${variants({
-          dragging: isOverlay ? "overlay" : isDragging ? "over" : undefined,
-        })} pb-2`}>
-        <CardHeader className="p-4 font-semibold border-b-2 text-left flex flex-row space-between items-center">
-          <Button
-            variant={"ghost"}
-            {...attributes}
-            {...listeners}
-            className=" p-1 text-primary/50 -ml-2 h-auto cursor-grab relative"
-          >
-            <span className="sr-only">{`Move column: ${column.title}`}</span>
-            <GripVertical />
-          </Button>
-          <span className="ml-auto"> {column.title}</span>
-        </CardHeader>
-        <ScrollArea>
-          <CardContent className="flex flex-grow flex-col gap-2 p-2">
-            <SortableContext items={tasksIds}>
-              {tasks.map((task) => (
-                <TaskCard key={task.id} task={task} />
-              ))}
-            </SortableContext>
-          </CardContent>
-        </ScrollArea>
-      </div>
-      <CardHeader className="p-2 font-semibold border-b-2 text-left flex flex-row space-between items-center">
-        <KanbanCardForm apiUrl={apiUrl} kanbanBoardId={column.id} />
+    <Card ref={setNodeRef}
+      style={style}
+      className={`${variants({
+        dragging: isOverlay ? "overlay" : isDragging ? "over" : undefined,
+      })}`}>
+      <CardHeader className="p-4 font-semibold border-b-2 text-left flex flex-row space-between items-center">
+        <Button variant={"ghost"} {...attributes} {...listeners} className=" p-1 text-primary/50 -ml-2 h-auto cursor-grab relative">
+          <span className="sr-only">{`Move column: ${column.title}`}</span>
+          <GripVertical />
+        </Button>
+
+        <p className="ml-auto"> {column.title}</p>
+        <KanbanBoardForm apiUrl={apiUrl} id={column.id} />
       </CardHeader>
+      <ScrollArea>
+        <CardContent className="flex flex-grow flex-col gap-2 p-4">
+          <SortableContext items={tasksIds}>
+            {tasks.map((task) => (
+              <TaskCard key={task.id} task={task} kanbanBoardId={column.id} apiUrl={apiUrl} />
+            ))}
+            <KanbanCardForm apiUrl={apiUrl} kanbanBoardId={column.id} />
+
+          </SortableContext>
+        </CardContent>
+      </ScrollArea>
     </Card>
   );
 }

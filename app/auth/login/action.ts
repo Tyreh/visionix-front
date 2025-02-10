@@ -28,13 +28,13 @@ export async function login(username: string, password: string) {
         const responseData = await response.json();
         if (responseData.status === 200) {
             const { accessToken, refreshToken } = responseData.data;
-            const cookieStore = cookies();
+            const cookieStore = await cookies();
 
             const accessPayload = decodeJWT(accessToken);
             const refreshPayload = decodeJWT(refreshToken);
 
             const accessExpires = accessPayload?.exp
-                ? new Date(accessPayload.exp * 1000) // Convertir UNIX timestamp a Date
+                ? new Date(accessPayload.exp * 1000)  // Convertir UNIX timestamp a Date
                 : new Date(Date.now() + 15 * 60 * 1000); // Valor por defecto (15 min)
 
             const refreshExpires = refreshPayload?.exp

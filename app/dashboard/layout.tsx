@@ -5,6 +5,7 @@ import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { secureFetch } from "@/secure-fetch";
 import { Toaster } from '@/components/ui/toaster';
+import Providers from '@/components/layout/providers';
 
 export const metadata: Metadata = {
     title: 'Next Shadcn Dashboard Starter',
@@ -21,15 +22,17 @@ export default async function DashboardLayout({
     const defaultOpen = cookieStore.get('sidebar:state')?.value === 'true';
     const userData = await secureFetch(`${process.env.API_URL}/user/logged-user`);
     return (
-        <SidebarProvider defaultOpen={defaultOpen}>
-            <AppSidebar user={userData.data} />
-            <SidebarInset>
-                <Header user={userData.data} />
-                {/* page main content */}
-                {children}
-                <Toaster />
-                {/* page main content ends */}
-            </SidebarInset>
-        </SidebarProvider>
+        <Providers>
+            <SidebarProvider defaultOpen={defaultOpen}>
+                <AppSidebar user={userData.data} />
+                <SidebarInset>
+                    <Header user={userData.data} />
+                    {/* page main content */}
+                    {children}
+                    <Toaster />
+                    {/* page main content ends */}
+                </SidebarInset>
+            </SidebarProvider>
+        </Providers>
     );
 }

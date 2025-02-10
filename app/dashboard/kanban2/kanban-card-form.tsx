@@ -15,7 +15,7 @@ import { Form } from "@/components/ui/form";
 import FormTextArea from "@/components/ui/form/form-text-area";
 import { secureFetch } from "@/secure-fetch";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Pen, Plus } from "lucide-react";
+import { EllipsisVertical, Pen, Plus } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -38,7 +38,7 @@ const formSchema = z.object({
 
 interface Props {
     apiUrl: string;
-    id?: string;
+    id?: UniqueIdentifier;
     kanbanBoardId: UniqueIdentifier;
 }
 
@@ -69,7 +69,7 @@ export default function KanbanCardForm({ apiUrl, id, kanbanBoardId }: Props) {
             body: JSON.stringify({
                 ...(id ? { id: id } : {}),
                 indexOrder: values.indexOrder,
-                kanbanBoard: {id: kanbanBoardId},
+                kanbanBoard: { id: kanbanBoardId },
                 title: values.title,
                 description: values.description
             })
@@ -95,34 +95,43 @@ export default function KanbanCardForm({ apiUrl, id, kanbanBoardId }: Props) {
 
     async function fetchData() {
         setLoadingData(true);
-        const response = await secureFetch(`${apiUrl}/note/${id}`);
+        const response = await secureFetch(`${apiUrl}/kanban-card/${id}`);
         form.setValue("id", response.data.id);
         form.setValue("title", response.data.title);
+        form.setValue("description", response.data.description);
+        form.setValue("kanbanBoardId", response.data.kanbanBoard.id);
         setLoadingData(false);
     }
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger className={`${buttonVariants({ 'variant': 'outline', 'size': 'sm' })} w-full`}>
-                <Plus className="h-4 w-4" />Crear tarea
-            </DialogTrigger>
+            {id ?
+                <DialogTrigger asChild>
+                    <Button  onClick={() => fetchData()} variant="outline" size="sm" className="ml-auto">Ver más</Button>
+                </DialogTrigger>
+                :
+                <DialogTrigger className={"flex justify-center items-center text-muted-foreground w-full hover:cursor-pointer hover:text-black"}>
+                    <Plus className="h-4 w-4 me-2" />Crear tarea
+                </DialogTrigger>
+            }
+
             <DialogContent className="max-h-[90vh] overflow-y-auto">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
 
                         <DialogHeader>
-                            <DialogTitle>Crear Tarea</DialogTitle>
+                            <DialogTitle>{id ? 'Detalles de Tarea' : 'Crear Tarea'}</DialogTitle>
                             <DialogDescription>
-                                ¿Qué hay pa&apos; hacer?
+                                {id ? 'Visualiza y edita los detalles de tu tarea' : "¿Qué hay pa' hacer"}
                             </DialogDescription>
                         </DialogHeader>
-                        
+
                         <ScrollArea className="max-h-[60vh] overflow-y-auto my-4">
                             <div className="grid gap-4 mx-2">
                                 {loadingData ?
                                     <Skeleton className="h-24 w-full" />
                                     :
-                                    <FormTextArea name="title" label="Título o resumen de la tarea" control={form.control} props={{ disabled: loading}} />
+                                    <FormTextArea name="title" label="Título o resumen de la tarea" control={form.control} props={{ disabled: loading }} />
                                 }
                                 {loadingData ?
                                     <Skeleton className="h-24 w-full" />
