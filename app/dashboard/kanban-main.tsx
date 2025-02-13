@@ -2,7 +2,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { secureFetch } from "@/secure-fetch";
 import KanbanBoardForm from "./kanban2/kanban-board-form";
 import { KanbanBoard } from "@/components/kanban/kanban-board";
-import { WalletCards } from "lucide-react";
 
 interface Props {
     apiUserId: string;

@@ -22,7 +22,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import DeleteAction from "@/app/dashboard/[module]/[id]/delete-action";
+import DeleteAction from "@/components/view/delete-action";
 
 interface TableProps {
     apiUrl: string;

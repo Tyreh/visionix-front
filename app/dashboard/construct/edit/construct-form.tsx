@@ -6,17 +6,6 @@ import FormInput from "@/components/ui/form/form-input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
-import { Minus, Plus } from "lucide-react";
-import { Separator } from "@radix-ui/react-separator";
 import FormFieldArray from "@/components/ui/form/form-field-array";
 import { secureFetch } from "@/secure-fetch";
 import { useState } from "react";
