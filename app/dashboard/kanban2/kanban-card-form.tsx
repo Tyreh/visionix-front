@@ -64,7 +64,7 @@ export default function KanbanCardForm({ apiUrl, id, kanbanBoardId }: Props) {
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setLoading(true);
-        const response = await secureFetch(`${apiUrl}/kanban-card${id ? `/${id}` : ''}`, {
+        const response = await secureFetch(`${apiUrl}/kanbanCard${id ? `/${id}` : ''}`, {
             method: id ? 'PATCH' : 'POST',
             body: JSON.stringify({
                 ...(id ? { id: id } : {}),

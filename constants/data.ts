@@ -1,4 +1,4 @@
-import { BadgeDollarSign, Boxes, BringToFront, Building2, LayoutDashboard, Ungroup, UsersRound, Warehouse, ContactRound, CircleDollarSign } from 'lucide-react';
+import { BadgeDollarSign, Boxes, BringToFront, Building2, LayoutDashboard, Ungroup, UsersRound, Warehouse, ContactRound, CircleDollarSign, LockKeyhole, Key } from 'lucide-react';
 
 export interface NavItem {
   title: string;
@@ -41,72 +41,84 @@ export type Product = {
   updated_at: string;
 };
 
-//Info: The following data is used for the sidebar navigation and Cmd K bar.
 export const navItems: NavItem[] = [
   {
     title: 'Inicio',
     url: '/dashboard',
     icon: LayoutDashboard,
     isActive: false,
-    items: [] // Empty array as there are no child items for Dashboard
+    items: []
   },
   {
     title: 'Productos',
     url: '/dashboard/product',
     icon: Boxes,
     isActive: false,
-    items: [] // Empty array as there are no child items for Dashboard
+    items: []
   },
   {
     title: 'Categorías de Productos',
-    url: '/dashboard/product-category',
+    url: '/dashboard/productCategory',
     icon: Ungroup,
     isActive: false,
-    items: [] // Empty array as there are no child items for Dashboard
+    items: []
   },
   {
     title: 'Categorías de Precios',
-    url: '/dashboard/price-list',
+    url: '/dashboard/priceList',
     icon: BadgeDollarSign,
     isActive: false,
-    items: [] // Empty array as there are no child items for Dashboard
+    items: []
   },
   {
     title: 'Órdenes de Pedido',
-    url: '/dashboard/warehouse-order',
+    url: '/dashboard/warehouseOrder',
     icon: BringToFront,
     isActive: false,
-    items: [] // Empty array as there are no child items for Dashboard
+    items: []
   },
   {
     title: 'Compañías',
     url: '/dashboard/company',
     icon: Building2,
     isActive: false,
-    items: [] // Empty array as there are no child items for Dashboard
+    items: []
   },
   {
     title: 'Empleados',
     url: '/dashboard/employee',
     icon: ContactRound,
     isActive: false,
-    items: [] // Empty array as there are no child items for Dashboard
+    items: []
   },
   {
     title: 'Divisas',
     url: '/dashboard/currency',
     icon: CircleDollarSign,
     isActive: false,
-    items: [] // Empty array as there are no child items for Dashboard
+    items: []
   },
   {
     title: 'Usuarios',
-    url: '/dashboard/api-user',
+    url: '/dashboard/apiUser',
     icon: UsersRound,
     isActive: false,
-    items: [] // Empty array as there are no child items for Dashboard
+    items: []
   },
-
+  {
+    title: 'Roles',
+    url: '/dashboard/role',
+    icon: LockKeyhole,
+    isActive: false,
+    items: []
+  },
+  {
+    title: 'Permisos',
+    url: '/dashboard/permissions',
+    icon: Key,
+    isActive: false,
+    items: []
+  },
   // {
   //   title: 'Product',
   //   url: '/dashboard/product',
@@ -131,7 +143,7 @@ export const navItems: NavItem[] = [
   //       url: '/dashboard/product-category',
   //       shortcut: ['m', 'm']
   //     },
- 
+
   //     {
   //       title: 'Login',
   //       shortcut: ['l', 'l'],

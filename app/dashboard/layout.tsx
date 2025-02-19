@@ -12,27 +12,17 @@ export const metadata: Metadata = {
     description: 'Basic dashboard with Next.js and Shadcn'
 };
 
-export default async function DashboardLayout({
-    children
-}: {
-    children: React.ReactNode;
-}) {
-    // Persisting the sidebar state in the cookie.
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
     const cookieStore = await cookies();
     const defaultOpen = cookieStore.get('sidebar:state')?.value === 'true';
     const userData = await secureFetch(`${process.env.API_URL}/user/logged-user`);
     return (
-        <Providers>
-            <SidebarProvider defaultOpen={defaultOpen}>
-                <AppSidebar user={userData.data} />
-                <SidebarInset>
-                    <Header user={userData.data} />
-                    {/* page main content */}
-                    {children}
-                    <Toaster />
-                    {/* page main content ends */}
-                </SidebarInset>
-            </SidebarProvider>
-        </Providers>
+        <SidebarProvider defaultOpen={defaultOpen}>
+            <AppSidebar user={userData.data} />
+            <SidebarInset>
+                <Header user={userData.data} />
+                {children}
+            </SidebarInset>
+        </SidebarProvider>
     );
 }

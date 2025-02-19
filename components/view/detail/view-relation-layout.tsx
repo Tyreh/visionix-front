@@ -12,6 +12,7 @@ export interface Props {
 
 export interface FieldMetadata {
     label: string;
+    field: string;
     showInList?: boolean;
     type?: string;
     redirect?: string;
@@ -21,16 +22,7 @@ export interface FieldMetadata {
 
 export default async function ViewRelationLayout({ module, id }: Props) {
     const response = await secureFetch(`${process.env.API_URL}/${module}/${id}`);
-
-    const filteredFields = response ? Object.entries(response.metadata.fields as Record<string, FieldMetadata>)
-        .filter(([, fieldMetadata]) => fieldMetadata.showInList && fieldMetadata.type !== "IMAGE")
-        .sort(([, a], [, b]) => {
-            const orderA = Number(a.renderOrder) || Number.MAX_SAFE_INTEGER;
-            const orderB = Number(b.renderOrder) || Number.MAX_SAFE_INTEGER;
-            return orderA - orderB; // Orden ascendente
-        }) : [];
-
-    const columns = filteredFields.map(([_, fieldMetadata]) => fieldMetadata.label);
+    const columns: FieldMetadata[] = response.metadata.fields.filter((field: FieldMetadata) => field.showInList);
     const data = response?.data || [];
 
     return (
@@ -40,18 +32,19 @@ export default async function ViewRelationLayout({ module, id }: Props) {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            {columns.map((column, index) => <TableHead key={index}>{column}</TableHead>)}
+                            {columns.map((field, index) => <TableHead key={index}>{field.label}</TableHead>)}
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {data.length ? (
                             data.map((item: any, rowIndex: number) => (
                                 <TableRow key={rowIndex}>
-                                    {filteredFields.map(([key, fieldMetadata]) => {
-                                        const fieldValue = getNestedValue(item, fieldMetadata.nestedValue || key) || "-";
-                                        const redirectPath = fieldMetadata.redirect ? resolveRedirectPath(fieldMetadata.redirect, item) : null;
+                                    {columns.map(field => {
+                                        const nestedPath = field.nestedValue || field.field;
+                                        const fieldValue = getNestedValue(item, nestedPath);
+                                        const redirectPath = field.redirect ? resolveRedirectPath(field.redirect, item) : null;
                                         return (
-                                            <TableCell key={key}>
+                                            <TableCell key={`${item.id}-${field.field}`}>
                                                 {redirectPath ? (
                                                     <Link className="text-primary hover:text-opacity-90 hover:underline" href={`/dashboard/${redirectPath}`}>
                                                         {fieldValue}

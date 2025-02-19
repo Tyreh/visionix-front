@@ -2,7 +2,7 @@
 
 export async function forgotPassword(username: string) {
     try {
-        const response = await fetch(`${process.env.API_URL}/auth/forgot-password`, {
+        const response = await fetch(`${process.env.API_URL}/auth/forgotPassword`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username }),

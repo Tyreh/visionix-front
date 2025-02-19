@@ -56,9 +56,9 @@ export async function secureFetch(url, options = {}) {
     headers,
   });
 
-  if (!response.ok) {
-    throw new Error(`Error in fetch: ${response.status}`);
-  }
+  // if (!response.ok) {
+  //   throw new Error(`Error in fetch: ${response.status}`);
+  // }
 
   return await response.json();
 }

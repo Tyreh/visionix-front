@@ -13,7 +13,7 @@ export default function LoginPage() {
       </div>
       <LoginForm />
       <p className='px-8 text-center text-sm text-muted-foreground pt-4'>
-        <Link href='/auth/forgot-password' className='underline underline-offset-4 hover:text-primary'>
+        <Link href='/auth/forgotPassword' className='underline underline-offset-4 hover:text-primary'>
           ¿Olvidaste tu contraseña?
         </Link>
       </p>

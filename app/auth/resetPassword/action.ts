@@ -1,7 +1,7 @@
 'use server'
 
 export async function validateToken(recoveryToken: string) {
-    const response = await fetch(`${process.env.API_URL}/auth/validate-recovery-token`, {
+    const response = await fetch(`${process.env.API_URL}/auth/validateRecoveryToken`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: recoveryToken }),
@@ -13,7 +13,7 @@ export async function validateToken(recoveryToken: string) {
 
 export async function resetPassword(rawPassword: string, recoveryToken: string) {
     try {
-        const response = await fetch(`${process.env.API_URL}/auth/reset-password`, {
+        const response = await fetch(`${process.env.API_URL}/auth/resetPassword`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ rawPassword, recoveryToken }),

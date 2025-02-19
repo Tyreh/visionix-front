@@ -15,8 +15,6 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import DeleteAction from "@/components/view/delete-action";
 import PageContainer from "@/components/layout/page-container";
 
-
-
 interface FieldMetadata {
     renderOrder?: number;
     label: string;
@@ -44,31 +42,21 @@ interface Props {
     metadata: any;
     extraActions?: React.ReactNode[];
     data: any;
+    title?: string;
 }
 
-export default function ViewDetailLayout({ module, id, metadata, extraActions, data, children }: Props) {
+export default function ViewDetailLayout({ module, id, metadata, extraActions, data, title, children }: Props) {
 
-    const imageFields: [string, FieldMetadata][] = Object.entries(metadata.fields as Record<string, FieldMetadata>)
-        .filter(([, fieldMetadata]) => fieldMetadata.type === "IMAGE");
-
-    const sortedFields: [string, FieldMetadata][] = Object.entries(metadata.fields as Record<string, FieldMetadata>)
-        .filter(([, fieldMetadata]) => fieldMetadata.showInDetail && fieldMetadata.type !== "IMAGE")
-        .sort(([, a], [, b]) => {
-            const orderA = Number(a.renderOrder) || Number.MAX_SAFE_INTEGER;
-            const orderB = Number(b.renderOrder) || Number.MAX_SAFE_INTEGER;
-
-            if (orderA === orderB) {
-                return a.label.localeCompare(b.label);
-            }
-
-            return orderA - orderB;
-        });
+    const imageFields = metadata.fields.filter(field => field.showInDetail && field.type === 'IMAGE');
 
     return (
         <PageContainer>
             <div className="flex flex-1 flex-col space-y-2">
                 <div className="flex justify-between items-center">
-                    <h3 className="font-semibold">Detalles de {metadata.entity.singular}</h3>
+                    <div className="flex flex-col">
+                        <h3 className="font-semibold">Detalles de {metadata.entity.singular}</h3>
+                        {id && <p className="text-sm text-muted-foreground">{title}</p>}
+                    </div>
 
                     <div className="flex flex-nowrap">
                         <Link
@@ -86,7 +74,7 @@ export default function ViewDetailLayout({ module, id, metadata, extraActions, d
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent>
                                     <DropdownMenuGroup>
-                                        <Link href={`/app/${module}/edit`}>
+                                        <Link href={`/dashboard/${module}/edit`}>
                                             <DropdownMenuItem>
                                                 <CirclePlus />
                                                 <span>Crear {metadata.entity.singular}</span>
@@ -115,28 +103,28 @@ export default function ViewDetailLayout({ module, id, metadata, extraActions, d
                 <div className={`flex flex-col ${imageFields.length > 0 ? 'md:flex-row gap-4' : ''}`}>
                     {imageFields.length > 0 && (
                         <div className="w-full md:w-1/5 p-4 border rounded-lg flex flex-col items-center">
-                            {imageFields.map(([key, fieldMetadata]) => (
-                                <div key={key} className="mb-4">
-                                    <Label className="font-semibold">{fieldMetadata.label}</Label>
+                            {imageFields.map(field =>
+                                <div key={field.field} className="mb-4">
+                                    <Label className="font-semibold">{field.label}</Label>
                                     <img
-                                        src={getNestedValue(data, fieldMetadata.nestedValue || key)}
-                                        alt={fieldMetadata.label}
+                                        src={getNestedValue(data, field.nestedValue || field.field)}
+                                        alt={field.label}
                                         className="w-full h-auto rounded-lg mt-2"
                                     />
                                 </div>
-                            ))}
+                            )}
                         </div>
                     )}
 
-                    <div className={`w-full ${imageFields.length > 0 ? 'md:w-4/5' : ''} grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-lg`}>
-                        {sortedFields.map(([key, fieldMetadata]) => {
-                            const nestedPath = fieldMetadata.nestedValue || key;
+                    <div className={`w-full ${imageFields.length > 0 ? 'md:w-4/5' : ''} grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border rounded-lg`}>
+                        {metadata.fields.filter(field => field.showInDetail && field.type !== 'IMAGE').map(field => {
+                            const nestedPath = field.nestedValue || field.field;
                             const fieldValue = getNestedValue(data, nestedPath);
-                            const redirectPath = fieldMetadata.redirect ? resolveRedirectPath(fieldMetadata.redirect, data) : null;
+                            const redirectPath = field.redirect ? resolveRedirectPath(field.redirect, data) : null;
 
                             return (
-                                <div key={key} className={`col-span-1 ${fieldMetadata.colSpan ? `md:col-span-3` : ''}`}>
-                                    <Label className="font-semibold">{fieldMetadata.label}</Label>
+                                <div key={field.field} className={`col-span-1 ${field.colSpan ? `md:col-span-3` : ''}`}>
+                                    <Label className="font-semibold">{field.label}</Label>
                                     <div className="rounded-lg px-3 py-2 bg-muted mt-2 break-words whitespace-normal h-10">
                                         {redirectPath ? (
                                             <Link className="text-primary hover:text-opacity-90 hover:underline" href={`/dashboard/${redirectPath}`}>{fieldValue}</Link>

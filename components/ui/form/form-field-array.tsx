@@ -1,11 +1,11 @@
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { ReactNode, useState, useEffect } from "react";
+import { FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { nanoid } from "nanoid";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ReactNode, useState, useEffect } from "react";
 import { Plus, Minus } from "lucide-react";
-import { FormMessage } from "../form";
+import { nanoid } from "nanoid";
 
 export interface FieldArrayComponentCellRendererProps<TField> {
     index: number;
@@ -108,7 +108,6 @@ function FormFieldArray<TField>({
                             }
                         </TableBody>
                     </Table>
-
                 </CardContent>
             </Card>
         </div>

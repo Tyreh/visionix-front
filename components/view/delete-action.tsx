@@ -11,9 +11,10 @@ interface Props {
     apiUrl: string;
     moduleName: string;
     id: string;
+    onSuccess?: () => void;
 }
 
-export default function DeleteAction({ apiUrl, moduleName, id }: Props) {
+export default function DeleteAction({ apiUrl, moduleName, id, onSuccess }: Props) {
     const [loading, setLoading] = useState<boolean>(false);
     const router = useRouter();
     const { toast } = useToast();
@@ -28,6 +29,9 @@ export default function DeleteAction({ apiUrl, moduleName, id }: Props) {
                 description: 'El registro ha sido eliminado correctamente.'
             })
             router.push(`/dashboard/${moduleName}`);
+            if (onSuccess) {
+                onSuccess();
+            }
         } else {
             toast({
                 variant: "destructive",
@@ -48,7 +52,7 @@ export default function DeleteAction({ apiUrl, moduleName, id }: Props) {
             <DialogFooter>
                 {!loading && <DialogClose className={buttonVariants({ 'variant': 'secondary' })}>Cancelar</DialogClose>}
                 <Button loading={loading} onClick={() => confirmDelete()}>Eliminar</Button>
-            </DialogFooter >
+            </DialogFooter>
         </DialogContent>
     );
 }

@@ -56,7 +56,7 @@ export default function KanbanBoardForm({ apiUrl, id }: Props) {
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setLoading(true);
-        const response = await secureFetch(`${apiUrl}/kanban-board${id ? `/${id}` : ''}`, {
+        const response = await secureFetch(`${apiUrl}/kanbanBoard${id ? `/${id}` : ''}`, {
             method: id ? 'PATCH' : 'POST',
             body: JSON.stringify({
                 ...(id ? { id: id } : {}),

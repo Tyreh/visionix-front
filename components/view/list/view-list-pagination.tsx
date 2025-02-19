@@ -27,31 +27,39 @@ interface Props {
 
 export function ViewListPagination({ page, pageSize, setPage, setPageSize, pages, updatePreference, moduleName }: Props) {
     return (
-        <div className="flex flex-row-reverse items-center justify-between px-2">
-            <div className="flex items-center space-x-6 lg:space-x-8">
-                <div className="flex items-center space-x-2">
-                    <p className="text-sm font-medium">Registros por página</p>
-                    <Select value={pageSize} onValueChange={(value: string) => {
-                        setPageSize(value);
-                        updatePreference(`${moduleName}-vlps`, value);
-                    }}>
-                        <SelectTrigger className="h-8 w-[70px]">
-                            <SelectValue placeholder={pageSize} />
-                        </SelectTrigger>
-                        <SelectContent side="top">
-                            {[25, 50, 75, 100].map(item => (
-                                <SelectItem key={item} value={`${item}`}>
-                                    {item}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+        <div className='flex flex-col items-center justify-end gap-2 space-x-2 py-2 sm:flex-row'>
+            <div className='flex w-full items-center justify-between'>
+                <div className='flex flex-col items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8'>
+                    <div className='flex items-center space-x-2'>
+                        <p className='whitespace-nowrap text-sm font-medium'>Filas por página</p>
+                        <Select
+                            value={`${pageSize}`}
+                            onValueChange={(value: string) => {
+                                setPageSize(value);
+                                updatePreference(`${moduleName}-vlps`, value);
+                            }}
+                        >
+                            <SelectTrigger className='h-8 w-[70px]'>
+                                <SelectValue placeholder={pageSize} />
+                            </SelectTrigger>
+                            <SelectContent side='top'>
+                                {[25, 50, 75, 100].map(item => (
+                                    <SelectItem key={item} value={`${item}`}>
+                                        {item}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
-                <div className="flex w-[100px] items-center justify-center text-sm font-medium text-nowrap">
+            </div>
+
+            <div className='flex w-full items-center justify-between gap-2 sm:justify-end'>
+                <div className='flex w-[150px] items-center justify-center text-sm font-medium'>
                     Página {pages === 0 ? '0' : parseInt(page) + 1} de{" "}
                     {pages}
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className='flex items-center space-x-2'>
                     <Button
                         variant="outline"
                         className="hidden h-8 w-8 p-0 lg:flex"
@@ -102,6 +110,7 @@ export function ViewListPagination({ page, pageSize, setPage, setPageSize, pages
                     </Button>
                 </div>
             </div>
+
         </div>
     )
 }

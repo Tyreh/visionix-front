@@ -13,9 +13,9 @@ interface Props {
 }
 
 export default async function Kanban({ apiUserId }: Props) {
-    const boards = await secureFetch(`${process.env.API_URL}/kanban-board/search?apiUserId=${apiUserId}`);
+    const boards = await secureFetch(`${process.env.API_URL}/kanbanBoard/search?apiUserId=${apiUserId}`);
     const boardsWithCards = await Promise.all(boards.data.map(async (board) => {
-        const cards = await secureFetch(`${process.env.API_URL}/kanban-card/search?kanbanBoardId=${board.id}&apiUserId=${apiUserId}`);
+        const cards = await secureFetch(`${process.env.API_URL}/kanbanCard/search?kanbanBoardId=${board.id}&apiUserId=${apiUserId}`);
         return { ...board, cards: cards.data };
     }));
 
